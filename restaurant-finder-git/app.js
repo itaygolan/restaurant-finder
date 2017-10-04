@@ -15,7 +15,7 @@ const errorHandlers = require('./handlers/errorHandlers');
 require('./handlers/passport');
 // the code is read in a sequential manner
 
-// create our Express app
+// create Express app
 const app = express();
 
 // view engine setup
@@ -45,14 +45,14 @@ app.use(session({
   store: new MongoStore({ mongooseConnection: mongoose.connection }) // sessions stored in MongoDB database
 }));
 
-// // Passport JS is what we use to handle our logins
+// // Passport JS is what we use to handle logins
 app.use(passport.initialize());
 app.use(passport.session());
 
-// // The flash middleware let's us use req.flash('error', 'Shit!'), which will then pass that message to the next page the user requests
+// // The flash middleware allows req.flash
 app.use(flash());
 
-// pass variables to our templates + all requests
+// pass variables to templates + all requests
 app.use((req, res, next) => {
   res.locals.h = helpers;
   res.locals.flashes = req.flash();
@@ -67,16 +67,15 @@ app.use((req, res, next) => {
   next();
 });
 
-// After allllll that above middleware, we finally handle our own routes!
+// handling routes
 app.use('/', routes); // everytime someone goes to a '/' url of the site, routes folder is called
 
-// If that above routes didnt work, we 404 them and forward to error handler
+// If above routes don't work, 404 them and forward to error handler
 app.use(errorHandlers.notFound);
 
-// One of our error handlers will see if these errors are just validation errors
+// Validation errors
 app.use(errorHandlers.flashValidationErrors);
 
-// Otherwise this was a really bad error we didn't expect! Shoot eh
 if (app.get('env') === 'development') {
   /* Development Error Handler - Prints stack trace */
   app.use(errorHandlers.developmentErrors);
@@ -85,5 +84,5 @@ if (app.get('env') === 'development') {
 // production error handler
 app.use(errorHandlers.productionErrors);
 
-// done! we export it so we can start the site in start.js
+// export to start.js
 module.exports = app;
